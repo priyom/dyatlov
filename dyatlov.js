@@ -53,6 +53,35 @@ Dyatlov.prototype = {
 					lng: Math.random(),
 				};
 			},
+			// Availability of user slots, if applicable
+			availability: function() {
+				if (this.raw.users == null ||
+				    this.raw.users == '' ||
+				    this.raw.users_max == null ||
+				    this.raw.users_max == '')
+					return null;
+
+				var current = Number(this.raw.users);
+				var max = Number(this.raw.users_max);
+
+				// Reject NaN
+				if (((! current) && current != 0) ||
+				    ((! max) && max != 0))
+					return null;
+
+				return (current < max);
+			},
+			// Color-coded icon URL to use as marker on the map
+			marker_icon: function() {
+				var avail = this.availability();
+				var color;
+				if (avail != null)
+					color = avail ? 'red' : 'yellow';
+				else
+					color = 'green';
+
+				return 'https://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png';
+			},
 			// HTML content of marker info bubble
 			bubble_HTML: function() {
 				return '<a href="' + this.xml_escape(this.raw.url) + '" style="color:teal;font-weight:bold;text-decoration:none">' + this.xml_escape(this.raw.name) + '</a>';
@@ -62,6 +91,7 @@ Dyatlov.prototype = {
 				return new google.maps.Marker({
 					title: this.xml_escape(this.raw.name),
 					position: new google.maps.LatLng(this.coords()),
+					icon: this.marker_icon(),
 				});
 			},
 			// Create a Google API info bubble object for the
