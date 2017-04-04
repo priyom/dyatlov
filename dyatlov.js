@@ -102,7 +102,7 @@ Dyatlov.prototype = {
 		return [].concat(
 			// Each data source is optional and may or may not
 			// have been loaded
-			[]
+			(typeof static_rx == "object" && static_rx) ? static_rx : []
 		).filter(this.RX.validate).map(function(rx) {
 			return new this.RX(rx);
 		}, this);
