@@ -1,0 +1,117 @@
+#! /bin/sh
+# KiwiSDR.com receiver list extractor for dyatlov map maker
+# Copyright 2017 Pierre Ynard
+# Licensed under GPLv3+
+#
+# This script fetches the KiwiSDR.com receiver list, parses it, and
+# updates a javascript file with the extracted data, to be sourced by
+# the dyatlov map maker. It can run interactively, or in an automated
+# way.
+#
+# The target directory for the javascript data files can be passed
+# as an optional first argument to the script; by default, the
+# script directory will be used. If setting up automated updates, it
+# is strongly recommended for security reasons to use a separate,
+# unprivileged target directory.
+
+# Input and output configuration
+SOURCE_URL='http://kiwisdr.com/public/'
+JS_FILENAME='kiwisdr_com.js'
+
+# Check dependencies, probe available features and switch color output
+if ! which wget > /dev/null 2>&1; then
+	echo 'Cannot find `wget`, aborting. This script requires `wget`, please install it.' >&2
+	exit 1
+fi
+
+if which diffstat > /dev/null 2>&1; then
+	[ -t 1 ] && diffstat='diffstat -C' || diffstat='diffstat'
+else
+	diffstat=''
+	# Interactive only, don't nag in error logs or cron emails
+	[ -t 2 ] && echo 'Consider installing `diffstat` for improved functionality.' >&2
+fi
+
+# Check if `diff --color` is supported on this version of `diff`
+if [ -t 1 ] && diff --color /dev/null /dev/null > /dev/null 2>&1; then
+	diff_color='--color'
+else
+	diff_color=''
+fi
+
+# Directory magic to find parser script
+bindir="$(dirname -- "$0")"
+parser="${bindir}/kiwisdr_com-parse"
+
+if [ ! -x "$parser" ]; then
+	echo 'Cannot run parser script `'"$parser"'`, aborting.' >&2
+	exit 1
+fi
+
+# Determine target data directory, use optional first argument
+datadir="${1:-$bindir}"
+
+if ! [ -d "$datadir" -a -w "$datadir" ]; then
+	echo "Cannot write into target directory '$datadir', aborting." >&2
+	exit 1
+fi
+
+# Target data files
+prev_js="${datadir}/${JS_FILENAME}"
+new_js="${datadir}/${JS_FILENAME}.tmp"
+
+# Cleaning this up may be more robust
+rm -f -- "$new_js"
+
+# Fetch and parse source data
+wget_status=$({
+	{
+		if [ -t 2 ]; then
+			# Interactive: verbose output with progress bar
+			wget -O - -- "$SOURCE_URL" >&3
+			echo $? >&4
+		else
+			# Non-interactive: non-verbose output, and also
+			# filter out download logs to keep only real error
+			# messages
+			{
+				wget -nv -O - -- "$SOURCE_URL" 2>&1 >&3
+				echo $? >&4
+			} | grep -v -- '\]$' >&2
+		fi
+	} 3>&1 | "$parser" >| "$new_js"
+} 4>&1) || exit $?
+
+[ $wget_status -eq 0 ] || exit $wget_status
+
+# Heurisitic check that output isn't empty of any data. This should
+# catch source format changes making the parser script completely fail.
+js_real_lines=$(
+	grep -c -- '[A-Za-z]' "$new_js"
+	grep_status=$?
+	[ $grep_status -lt 2 ] || exit $grep_status
+) || exit $?
+
+if [ "$js_real_lines" -lt 10 ]; then
+	echo "Parsing of '$SOURCE_URL' failed: output too short. Aborting." >&2
+	exit 1
+fi
+
+# Output diff to stdout for control or logging purposes
+diff $diff_color -uN -- "$prev_js" "$new_js"
+if [ -n "$diffstat" ]; then
+	diff -uN -- "$prev_js" "$new_js" | $diffstat
+fi
+
+# If interactive, ask before replacing file
+if [ -t 0 -a -t 2 -a -e "$prev_js" ]; then
+	read -p "Update '$prev_js'? (Y/n) " update >&2
+	case "$update" in
+		Y*|y*|'') true;;
+		*) exit 0;;
+	esac
+fi
+
+# Update data
+mv -f -- "$new_js" "$prev_js"
+

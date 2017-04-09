@@ -1,0 +1,68 @@
+#! /usr/bin/perl
+# KiwiSDR.com receiver list parser for dyatlov map maker
+# Copyright 2017 Pierre Ynard
+# Licensed under GPLv3+
+#
+# This script reads the http://kiwisdr.com/public/ listing HTML from the
+# standard input, and writes the corresponding extracted javascript data
+# to the standard output.
+#
+# The output is not JSON, but a ready-to-execute javascript file; so
+# data needs to be all the more carefully validated to prevent malicious
+# injection.
+
+use strict;
+use warnings;
+
+sub json_escape {
+	my $field = shift;
+	$field =~ s/["\r\n\\]/\\$&/g;
+	return $field;
+}
+
+print "// KiwiSDR.com receiver list for dyatlov map maker\n// Automatically generated from http://kiwisdr.com/public/\n";
+
+# Extract source data timestamp
+while (<STDIN>) {
+	if (/<body[ >]/) {
+		$_ = <STDIN>;
+		if (/^([^<\r]+)<br>/) {
+			print "// KiwiSDR.com data timestamp: $1\n";
+		} else {
+			print STDERR "Data timestamp extraction failed.\n";
+		}
+		last;
+	}
+}
+
+print "// File generation timestamp: ".gmtime()."\n\nvar kiwisdr_com = [\n";
+
+while (<STDIN>) {
+
+	# This marks the beginning of a section corresponding to one receiver
+	if (/<div class='cl-info'>/) {
+		print "\t{\n";
+
+		# Parse all the data fields of the receiver,
+		# available inside HTML comments
+		while (defined($_ = <STDIN>) && /<!-- ([\w]+)=(.*) -->/a) {
+			print "\t\t\"$1\":\"".json_escape($2)."\",\n";
+		}
+
+		# Parse the URL of the receiver, available only as HTML
+		$_ = <STDIN>;
+		if (/>([^<]+)<\/a>/) {
+			# It is unknown whether URLs are properly
+			# XML-encoded, or not; if they were, XML entities
+			# would need to be decoded here.
+			print "\t\t\"url\":\"".json_escape($1)."\"\n";
+		} else {
+			print STDERR "URL extraction failed: $_";
+		}
+
+		print "\t},\n";
+	}
+}
+
+print "];\n";
+
