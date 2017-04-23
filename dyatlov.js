@@ -20,6 +20,8 @@ Dyatlov.prototype = {
 	RX: (
 		C = function(data) {
 			this.raw = data;
+			if (! this.validate())
+				return {};
 			this.marker = this.create_marker();
 			this.bubble = this.create_bubble();
 		},
@@ -35,6 +37,19 @@ Dyatlov.prototype = {
 				return text.replace(/[&<>"']/g, function(c) {
 					return xml_entities[c];
 				});
+			},
+			// Check that receiver is wideband (more than 5 MHz)
+			wideband: function() {
+				if (! this.raw.bands)
+					return false;
+
+				var result = this.raw.bands.match(/(\d+)-(\d+)/);
+				if (result == null)
+					return false;
+				var min = Number(result[1]);
+				var max = Number(result[2]);
+
+				return (max - min >= 5000000);
 			},
 			// Parse and return GPS coordinates
 			coords: function() {
@@ -70,6 +85,14 @@ Dyatlov.prototype = {
 					return null;
 
 				return (current < max);
+			},
+			// Validate data and receiver for display
+			validate: function() {
+				return (
+					this.raw.name &&
+					this.raw.url &&
+					this.wideband()
+				);
 			},
 			// Color-coded icon URL to use as marker on the map
 			marker_icon: function() {
@@ -112,20 +135,6 @@ Dyatlov.prototype = {
 				this.marker.setMap(map_maker.map);
 			},
 		},
-		// Static method - validate imported RX data and filter RX
-		C.validate = function(data) {
-			if ((! data.name) || (! data.url) || (! data.bands))
-				return false;
-
-			// Only keep wideband receivers (more than 5 MHz)
-			var result = data.bands.match(/(\d+)-(\d+)/);
-			if (result == null)
-				return false;
-			var min = Number(result[1]);
-			var max = Number(result[2]);
-
-			return (max - min >= 5000000);
-		},
 	C),
 	// Merge and list valid receivers from available data sources
 	receivers: function() {
@@ -134,9 +143,13 @@ Dyatlov.prototype = {
 			// have been loaded
 			(typeof static_rx == "object" && static_rx) ? static_rx : [],
 			(typeof kiwisdr_com == "object" && kiwisdr_com) ? kiwisdr_com : []
-		).filter(this.RX.validate).map(function(rx) {
+		).map(function(rx) {
 			return new this.RX(rx);
-		}, this);
+			// If this receiver data is rejected, an empty object
+			// is returned instead, so filter these afterwards
+		}, this).filter(function(rx) {
+			return (rx.attach != null);
+		});
 	},
 	// Create and set up the Google API map object
 	create_map: function(element_id) {
