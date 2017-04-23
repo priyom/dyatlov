@@ -118,12 +118,16 @@ Dyatlov.prototype = {
 			},
 			// Color-coded icon URL to use as marker on the map
 			marker_icon: function() {
-				var avail = this.availability();
 				var color;
-				if (avail != null)
-					color = avail ? 'red' : 'yellow';
-				else
-					color = 'green';
+				if (this.downtime() != null)
+					color = 'purple';
+				else {
+					var avail = this.availability();
+					if (avail != null)
+						color = avail ? 'red' : 'yellow';
+					else
+						color = 'green';
+				}
 
 				return 'https://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png';
 			},
