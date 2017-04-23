@@ -112,7 +112,8 @@ Dyatlov.prototype = {
 				return (
 					this.raw.name &&
 					this.raw.url &&
-					this.wideband()
+					this.wideband() &&
+					(! this.downtime())
 				);
 			},
 			// Color-coded icon URL to use as marker on the map
