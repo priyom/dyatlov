@@ -189,6 +189,16 @@ Dyatlov.prototype = {
 			west: -180,
 			east: 180,
 		});
+
+		// Overlay day/night separation on the map, if an
+		// implementation was loaded. One is provided by
+		// https://github.com/marmat/google-maps-api-addons
+		if (typeof DayNightOverlay == "function") {
+			new DayNightOverlay({
+				map: map,
+			});
+		}
+
 		return map;
 	},
 	// Clear all info bubbles of all markers
