@@ -3,6 +3,8 @@ Dyatlov map maker
 
 The dyatlov map maker is aimed at displaying a map representation of various wideband shortwave radio receivers available around the world. It is built on top of the Google Maps API.
 
+A fully set-up receiver map instance is hosted at [rx.linkfanel.net](http://rx.linkfanel.net/).
+
 Inspiration
 ===========
 
