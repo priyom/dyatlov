@@ -17,6 +17,18 @@ Receivers are represented on the map by color-coded markers. The colors mean as 
 
 Please note that the availability data is not refreshed in real time and the colors are not always reliable, and are only an indication of what you can expect. You might still get lucky trying! (Or unlucky!)
 
+Receiver sources
+================
+
+We believe in shortwave for everyone, newcomers and seasoned users alike. We believe in easy one-click access to the waves: because it can and should be as simple as that. This is why we favor wideband shortwave receivers that offer a web-based, free and open access to the public.
+
+The dyatlov map maker supports merging and combining several data sources at the same time to display receivers from different listings on the same map. For now, ready-to-use support is included for:
+
+* a static configuration file featuring a hand-picked list of receivers
+* the [KiwiSDR.com receiver network](http://kiwisdr.com/public/), with dynamic availability updates
+
+We will study and work to include more receiver networks in the future.
+
 Inspiration
 ===========
 
