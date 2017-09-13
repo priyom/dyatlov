@@ -191,12 +191,19 @@ Dyatlov.prototype = {
 		});
 
 		// Overlay day/night separation on the map, if an
-		// implementation was loaded. One is provided by
+		// implementation was loaded.
+		// DayNightOverlay API implementation available at
 		// https://github.com/marmat/google-maps-api-addons
 		if (typeof DayNightOverlay == "function") {
 			new DayNightOverlay({
 				map: map,
 			});
+		}
+		// nite API implementation available at
+		// https://github.com/rossengeorgiev/nite-overlay
+		else if (typeof nite == "object" &&
+		         typeof nite.init == "function") {
+			nite.init(map);
 		}
 
 		return map;
