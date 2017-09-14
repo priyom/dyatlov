@@ -107,6 +107,12 @@ Dyatlov.prototype = {
 
 				return (current < max);
 			},
+			// Reception quality score,
+			// from 0 (lowest) to 1 (highest)
+			quality: function() {
+				// TODO: implement from definitive data source
+				return 1;
+			},
 			// Precedence score among other receivers,
 			// from 0 (bottom) to 1 (top)
 			precedence: function() {
