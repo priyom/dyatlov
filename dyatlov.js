@@ -116,16 +116,20 @@ Dyatlov.prototype = {
 			// Precedence score among other receivers,
 			// from 0 (bottom) to 1 (top)
 			precedence: function() {
+				var quality = this.quality();
+				if (quality == null)
+					quality = 0.5;
+
 				// Put offline receivers at the bottom
 				if (this.downtime())
-					return 0.01;
+					return 0.01 * quality;
 				if (this.downtime() != null)
-					return 0.1;
+					return 0.1 * quality;
 
 				// TODO: take availability into account
 				// once it is more reliable
 
-				return 1;
+				return quality;
 			},
 			// Validate data and receiver for display
 			validate: function() {
