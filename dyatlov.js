@@ -140,20 +140,22 @@ Dyatlov.prototype = {
 					(! this.downtime())
 				);
 			},
+			// Helper for color-coded marker icon URL
+			marker_color: function() {
+				if (this.downtime() != null)
+					return 'purple';
+
+				var avail = this.availability();
+				if (avail == null)
+					return 'green';
+				if (! avail)
+					return 'yellow';
+
+				return 'red';
+			},
 			// Color-coded icon URL to use as marker on the map
 			marker_icon: function() {
-				var color;
-				if (this.downtime() != null)
-					color = 'purple';
-				else {
-					var avail = this.availability();
-					if (avail != null)
-						color = avail ? 'red' : 'yellow';
-					else
-						color = 'green';
-				}
-
-				return 'https://maps.google.com/mapfiles/ms/icons/' + color + '-dot.png';
+				return 'https://maps.google.com/mapfiles/ms/icons/' + this.marker_color() + '-dot.png';
 			},
 			// HTML content of marker info bubble
 			bubble_HTML: function() {
