@@ -154,6 +154,8 @@ Dyatlov.prototype = {
 				return new google.maps.Marker({
 					title: this.xml_escape(this.raw.name),
 					position: new google.maps.LatLng(this.coords()),
+					zIndex: google.maps.Marker.MAX_ZINDEX +
+					        Math.round(65536 * this.precedence()),
 					icon: this.marker_icon(),
 				});
 			},
