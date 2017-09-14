@@ -107,6 +107,20 @@ Dyatlov.prototype = {
 
 				return (current < max);
 			},
+			// Precedence score among other receivers,
+			// from 0 (bottom) to 1 (top)
+			precedence: function() {
+				// Put offline receivers at the bottom
+				if (this.downtime())
+					return 0.01;
+				if (this.downtime() != null)
+					return 0.1;
+
+				// TODO: take availability into account
+				// once it is more reliable
+
+				return 1;
+			},
 			// Validate data and receiver for display
 			validate: function() {
 				return (
