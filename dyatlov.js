@@ -38,6 +38,12 @@ Dyatlov.prototype = {
 					return xml_entities[c];
 				});
 			},
+			parse_number: function(val) {
+				if (val == null || val == '')
+					return null;
+				var num = Number(val);
+				return Number.isNaN(num) ? null : num;
+			},
 			// Check that receiver is wideband (more than 5 MHz)
 			wideband: function() {
 				if (! this.raw.bands)
@@ -91,18 +97,10 @@ Dyatlov.prototype = {
 			},
 			// Availability of user slots, if applicable
 			availability: function() {
-				if (this.raw.users == null ||
-				    this.raw.users == '' ||
-				    this.raw.users_max == null ||
-				    this.raw.users_max == '')
-					return null;
+				var current = this.parse_number(this.raw.users);
+				var max = this.parse_number(this.raw.users_max);
 
-				var current = Number(this.raw.users);
-				var max = Number(this.raw.users_max);
-
-				// Reject NaN
-				if (((! current) && current != 0) ||
-				    ((! max) && max != 0))
+				if (current == null || max == null)
 					return null;
 
 				return (current < max);
