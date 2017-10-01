@@ -230,7 +230,7 @@ Dyatlov.prototype = {
 		}
 		// nite API implementation available at
 		// https://github.com/rossengeorgiev/nite-overlay
-		else if (typeof nite == "object" &&
+		else if (typeof nite == "object" && nite &&
 		         typeof nite.init == "function") {
 			nite.init(map);
 		}
