@@ -44,6 +44,12 @@ Dyatlov.prototype = {
 				var num = Number(val);
 				return Number.isNaN(num) ? null : num;
 			},
+			parse_date: function(val) {
+				if (! val)
+					return null;
+				var time = Date.parse(val.replace(/-/g, ' '));
+				return Number.isNaN(time) ? null : time;
+			},
 			// Check that receiver is wideband (more than 5 MHz)
 			wideband: function() {
 				if (! this.raw.bands)
@@ -77,11 +83,8 @@ Dyatlov.prototype = {
 			// Temporary or permanent downtime, if receiver
 			// missed latest status probes
 			downtime: function() {
-				if (! this.raw.updated)
-					return null;
-
-				var updated = Date.parse(this.raw.updated.replace(/-/g, ' '));
-				if (! updated)
+				var updated = this.parse_date(this.raw.updated);
+				if (updated == null)
 					return null;
 
 				var age = Date.now() - updated;
