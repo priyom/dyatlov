@@ -80,14 +80,20 @@ Dyatlov.prototype = {
 					lng: Math.random(),
 				};
 			},
+			// Age of last liveness indication
+			liveness_age: function() {
+				var updated = this.parse_date(this.raw.updated);
+				// Lack of update information means
+				// it's considered as always valid
+				if (updated == null)
+					return 0;
+
+				return Date.now() - updated;
+			},
 			// Temporary or permanent downtime, if receiver
 			// missed latest status probes
 			downtime: function() {
-				var updated = this.parse_date(this.raw.updated);
-				if (updated == null)
-					return null;
-
-				var age = Date.now() - updated;
+				var age = this.liveness_age();
 				// KiwiSDR.com updates receivers every
 				// 30 minutes, consider temporarily down
 				// after one hour
