@@ -21,6 +21,7 @@ Dyatlov.prototype = {
 		C = function(data) {
 			this.raw = data;
 			this.parsed = {
+				bandwidth: this.bandwidth(),
 				coords: this.coords(),
 				updated: this.parse_date(this.raw.updated),
 				users: {
@@ -59,18 +60,18 @@ Dyatlov.prototype = {
 				var time = Date.parse(val.replace(/-/g, ' '));
 				return Number.isNaN(time) ? null : time;
 			},
-			// Check that receiver is wideband (more than 5 MHz)
-			wideband: function() {
+			// Parse and return bandwidth of accessible spectrum
+			bandwidth: function() {
 				if (! this.raw.bands)
-					return false;
+					return null;
 
 				var result = this.raw.bands.match(/(\d+)-(\d+)/);
 				if (result == null)
-					return false;
+					return null;
 				var min = Number(result[1]);
 				var max = Number(result[2]);
 
-				return (max - min >= 5000000);
+				return max - min;
 			},
 			// Parse and return GPS coordinates
 			coords: function() {
@@ -97,6 +98,10 @@ Dyatlov.prototype = {
 					return 0;
 
 				return Date.now() - this.parsed.updated;
+			},
+			// Check that receiver is wideband (more than 5 MHz)
+			wideband: function() {
+				return (this.parsed.bandwidth >= 5000000);
 			},
 			// Temporary or permanent downtime, if receiver
 			// missed latest status probes
