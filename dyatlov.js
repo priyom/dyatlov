@@ -171,8 +171,11 @@ Dyatlov.prototype = {
 
 				if (! this.offline()) {
 					var users = this.parsed.users;
-					if (users.current != null && users.max != null)
-						lines.push('Users: ' + users.current + '/' + users.max);
+					if (users.current != null || users.max != null) {
+						var current = users.current != null ? users.current : '???';
+						var max = users.max != null ? users.max : '???';
+						lines.push('Users: ' + current + '/' + max);
+					}
 				} else if (this.downtime()) {
 					var ago = Number(this.age / 86400000).toFixed(1) + ' days ago';
 					lines.push('Last online: ' + ago);
