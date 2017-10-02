@@ -117,6 +117,12 @@ Dyatlov.prototype = {
 				// after one hour
 				return (this.age > 3900000);
 			},
+			// Check if receiver is offline, down or unavailable
+			offline: function() {
+				return (this.raw.status == 'offline' ||
+				        this.raw.status == 'inactive' ||
+				        this.downtime());
+			},
 			// Availability of user slots, if applicable
 			availability: function() {
 				var users = this.parsed.users;
@@ -139,7 +145,7 @@ Dyatlov.prototype = {
 					quality = 0.5;
 
 				// Put offline receivers at the bottom
-				if (this.downtime())
+				if (this.offline())
 					return 0.1 * quality;
 
 				// TODO: take availability into account
@@ -158,7 +164,7 @@ Dyatlov.prototype = {
 			},
 			// Helper for color-coded marker icon URL
 			marker_color: function() {
-				if (this.downtime())
+				if (this.offline())
 					return '9067FD'; // Purple
 
 				var avail = this.availability();
