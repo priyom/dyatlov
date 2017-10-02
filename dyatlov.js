@@ -104,18 +104,18 @@ Dyatlov.prototype = {
 			wideband: function() {
 				return (this.parsed.bandwidth >= 5000000);
 			},
-			// Temporary or permanent downtime, if receiver
-			// missed latest status probes
+			// Check if live recently and still relevant
+			// (less than 10 days of downtime)
+			recent: function() {
+				return (this.age < 864000000);
+			},
+			// Check if receiver is currently down,
+			// after missing latest status probes
 			downtime: function() {
 				// KiwiSDR.com updates receivers every
 				// 30 minutes, consider temporarily down
 				// after one hour
-				if (this.age < 3900000)
-					return null;
-				else
-					// Consider down for more than
-					// 10 days as permanent
-					return (this.age > 864000000);
+				return (this.age > 3900000);
 			},
 			// Availability of user slots, if applicable
 			availability: function() {
@@ -140,8 +140,6 @@ Dyatlov.prototype = {
 
 				// Put offline receivers at the bottom
 				if (this.downtime())
-					return 0.01 * quality;
-				if (this.downtime() != null)
 					return 0.1 * quality;
 
 				// TODO: take availability into account
@@ -155,12 +153,12 @@ Dyatlov.prototype = {
 					this.raw.name &&
 					this.raw.url &&
 					this.wideband() &&
-					(! this.downtime())
+					this.recent()
 				);
 			},
 			// Helper for color-coded marker icon URL
 			marker_color: function() {
-				if (this.downtime() != null)
+				if (this.downtime())
 					return '9067FD'; // Purple
 
 				var avail = this.availability();
