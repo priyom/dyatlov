@@ -187,7 +187,7 @@ Dyatlov.prototype = {
 			// Create a Google API marker object for this receiver
 			create_marker: function() {
 				return new google.maps.Marker({
-					title: this.xml_escape(this.raw.name),
+					title: this.raw.name, // XML-encoded by Marker code
 					position: new google.maps.LatLng(this.parsed.coords),
 					zIndex: google.maps.Marker.MAX_ZINDEX +
 					        Math.round(65536 * this.precedence()),
