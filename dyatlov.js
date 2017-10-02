@@ -33,6 +33,8 @@ Dyatlov.prototype = {
 
 			if (! this.validate())
 				return {};
+
+			this.title = this.marker_title();
 			this.marker = this.create_marker();
 			this.bubble = this.create_bubble();
 		},
@@ -162,6 +164,26 @@ Dyatlov.prototype = {
 					this.recent()
 				);
 			},
+			// Content of title-attribute marker tooltip
+			marker_title: function() {
+				var lines = [];
+				lines.push(this.raw.name);
+
+				if (! this.offline()) {
+					var users = this.parsed.users;
+					if (users.current != null && users.max != null)
+						lines.push('Users: ' + users.current + '/' + users.max);
+				} else if (this.downtime()) {
+					var ago = Number(this.age / 86400000).toFixed(1) + ' days ago';
+					lines.push('Last online: ' + ago);
+				} else
+					lines.push('Currently offline (check receiver for details)');
+
+				if (this.raw.antenna)
+					lines.push('Antenna: ' + this.raw.antenna);
+
+				return lines.join('\n');
+			},
 			// Helper for color-coded marker icon URL
 			marker_color: function() {
 				if (this.offline())
@@ -182,12 +204,12 @@ Dyatlov.prototype = {
 			},
 			// HTML content of marker info bubble
 			bubble_HTML: function() {
-				return '<a href="' + this.xml_escape(this.raw.url) + '" style="color:teal;font-weight:bold;text-decoration:none">' + this.xml_escape(this.raw.name) + '</a>';
+				return '<a href="' + this.xml_escape(this.raw.url) + '" style="color:teal;font-weight:bold;text-decoration:none" title="' + this.xml_escape(this.title) + '">' + this.xml_escape(this.raw.name) + '</a>';
 			},
 			// Create a Google API marker object for this receiver
 			create_marker: function() {
 				return new google.maps.Marker({
-					title: this.raw.name, // XML-encoded by Marker code
+					title: this.title, // XML-encoded by Marker code
 					position: new google.maps.LatLng(this.parsed.coords),
 					zIndex: google.maps.Marker.MAX_ZINDEX +
 					        Math.round(65536 * this.precedence()),
