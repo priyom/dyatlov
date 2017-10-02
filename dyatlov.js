@@ -29,6 +29,7 @@ Dyatlov.prototype = {
 					max: this.parse_number(this.raw.users_max),
 				},
 			};
+			this.age = this.liveness_age();
 
 			if (! this.validate())
 				return {};
@@ -106,16 +107,15 @@ Dyatlov.prototype = {
 			// Temporary or permanent downtime, if receiver
 			// missed latest status probes
 			downtime: function() {
-				var age = this.liveness_age();
 				// KiwiSDR.com updates receivers every
 				// 30 minutes, consider temporarily down
 				// after one hour
-				if (age < 3900000)
+				if (this.age < 3900000)
 					return null;
 				else
 					// Consider down for more than
 					// 10 days as permanent
-					return (age > 864000000);
+					return (this.age > 864000000);
 			},
 			// Availability of user slots, if applicable
 			availability: function() {
