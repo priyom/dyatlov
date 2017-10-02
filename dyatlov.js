@@ -177,7 +177,10 @@ Dyatlov.prototype = {
 						lines.push('Users: ' + current + '/' + max);
 					}
 				} else if (this.downtime()) {
-					var ago = Number(this.age / 86400000).toFixed(1) + ' days ago';
+					// Print using Moment.js API if available, fallback otherwise
+					var ago = typeof moment == 'function' ?
+						moment(this.parsed.updated).fromNow() :
+						Number(this.age / 86400000).toFixed(1) + ' days ago';
 					lines.push('Last online: ' + ago);
 				} else
 					lines.push('Currently offline (check receiver for details)');
