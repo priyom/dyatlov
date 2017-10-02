@@ -20,6 +20,15 @@ Dyatlov.prototype = {
 	RX: (
 		C = function(data) {
 			this.raw = data;
+			this.parsed = {
+				coords: this.coords(),
+				updated: this.parse_date(this.raw.updated),
+				users: {
+					current: this.parse_number(this.raw.users),
+					max: this.parse_number(this.raw.users_max),
+				},
+			};
+
 			if (! this.validate())
 				return {};
 			this.marker = this.create_marker();
@@ -82,13 +91,12 @@ Dyatlov.prototype = {
 			},
 			// Age of last liveness indication
 			liveness_age: function() {
-				var updated = this.parse_date(this.raw.updated);
 				// Lack of update information means
 				// it's considered as always valid
-				if (updated == null)
+				if (this.parsed.updated == null)
 					return 0;
 
-				return Date.now() - updated;
+				return Date.now() - this.parsed.updated;
 			},
 			// Temporary or permanent downtime, if receiver
 			// missed latest status probes
@@ -106,13 +114,11 @@ Dyatlov.prototype = {
 			},
 			// Availability of user slots, if applicable
 			availability: function() {
-				var current = this.parse_number(this.raw.users);
-				var max = this.parse_number(this.raw.users_max);
-
-				if (current == null || max == null)
+				var users = this.parsed.users;
+				if (users.current == null || users.max == null)
 					return null;
 
-				return (current < max);
+				return (users.current < users.max);
 			},
 			// Reception quality score,
 			// from 0 (lowest) to 1 (highest)
@@ -173,7 +179,7 @@ Dyatlov.prototype = {
 			create_marker: function() {
 				return new google.maps.Marker({
 					title: this.xml_escape(this.raw.name),
-					position: new google.maps.LatLng(this.coords()),
+					position: new google.maps.LatLng(this.parsed.coords),
 					zIndex: google.maps.Marker.MAX_ZINDEX +
 					        Math.round(65536 * this.precedence()),
 					icon: this.marker_icon(),
