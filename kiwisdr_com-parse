@@ -25,8 +25,7 @@ print "// KiwiSDR.com receiver list for dyatlov map maker\n// Automatically gene
 # Extract source data timestamp
 while (<STDIN>) {
 	if (/<body[ >]/) {
-		$_ = <STDIN>;
-		if (/^([^<\r]+)<br>/) {
+		if (defined($_ = <STDIN>) && /^([^<\r]+)<br>/) {
 			print "// KiwiSDR.com data timestamp: $1\n";
 		} else {
 			print STDERR "Data timestamp extraction failed.\n";
@@ -50,14 +49,13 @@ while (<STDIN>) {
 		}
 
 		# Parse the URL of the receiver, available only as HTML
-		$_ = <STDIN>;
-		if (/>([^<]+)<\/a>/) {
+		if (defined($_ = <STDIN>) && />([^<]+)<\/a>/) {
 			# It is unknown whether URLs are properly
 			# XML-encoded, or not; if they were, XML entities
 			# would need to be decoded here.
 			print "\t\t\"url\":\"".json_escape($1)."\"\n";
 		} else {
-			print STDERR "URL extraction failed: $_";
+			print STDERR "URL extraction failed: ".($_ // "truncated input\n");
 		}
 
 		print "\t},\n";
