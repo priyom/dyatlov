@@ -25,6 +25,7 @@ print "// KiwiSDR.com receiver list for dyatlov map maker\n// Automatically gene
 # Extract source data timestamp
 while (<STDIN>) {
 	if (/<body[ >]/) {
+		<STDIN>;
 		if (defined($_ = <STDIN>) && /^([^<\r]+)<br>/) {
 			print "// KiwiSDR.com data timestamp: $1\n";
 		} else {
