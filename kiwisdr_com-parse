@@ -36,7 +36,7 @@ while (<STDIN>) {
 	}
 }
 
-print "// File generation timestamp: ".gmtime()."\n\nvar kiwisdr_com = [\n";
+print "// File generation timestamp: ".gmtime()."\n\nvar kiwisdr_com =\n[\n";
 
 while (<STDIN>) {
 
@@ -64,5 +64,5 @@ while (<STDIN>) {
 	}
 }
 
-print "];\n";
+print "]\n;\n";
 
