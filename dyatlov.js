@@ -1,5 +1,5 @@
 // Dyatlov map maker
-// Copyright 2017 Pierre Ynard
+// Copyright 2018 Pierre Ynard
 // Licensed under GPLv3+
 
 // Helper variable for inline class declaration
@@ -121,7 +121,8 @@ Dyatlov.prototype = {
 			},
 			// Check if receiver is offline, down or unavailable
 			offline: function() {
-				return (this.raw.status == 'offline' ||
+				return (this.raw.offline == 'yes' ||
+				        this.raw.status == 'offline' ||
 				        this.raw.status == 'inactive' ||
 				        this.downtime());
 			},
