@@ -63,6 +63,12 @@ Dyatlov.prototype = {
 				var time = Date.parse(val.replace(/-/g, ' '));
 				return Number.isNaN(time) ? null : time;
 			},
+			// Scale unbounded positive metric down to 0..1 range
+			scale: function(val, con) {
+				if (val < 0)
+					return 0;
+				return 1 - Math.exp(-1 * val / con);
+			},
 			// Parse and return bandwidth of accessible spectrum
 			bandwidth: function() {
 				if (! this.raw.bands)
