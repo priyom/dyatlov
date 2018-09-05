@@ -156,6 +156,9 @@ Dyatlov.prototype = {
 				var precedence = 15;
 				if (this.snr != null)
 					precedence = this.snr;
+				else if (this.availability() == null)
+					// Rate custom setups by bandwidth
+					precedence += this.parsed.bandwidth / 1000000;
 
 				// Put offline receivers at the bottom
 				if (this.offline())
