@@ -29,6 +29,8 @@ Dyatlov.prototype = {
 					max: this.parse_number(this.raw.users_max),
 				},
 			};
+			// TODO: recover SNR from definitive data source
+			this.snr = null;
 			this.age = this.liveness_age();
 
 			if (! this.validate())
@@ -143,8 +145,10 @@ Dyatlov.prototype = {
 			// Reception quality score,
 			// from 0 (lowest) to 1 (highest)
 			quality: function() {
-				// TODO: implement from definitive data source
-				return 1;
+				if (this.snr == null)
+					return null;
+
+				return this.scale(this.snr, 20);
 			},
 			// Precedence score among other receivers,
 			// from 0 (bottom) to 1 (top)
@@ -194,6 +198,8 @@ Dyatlov.prototype = {
 
 				if (this.raw.antenna)
 					lines.push('Antenna: ' + this.raw.antenna);
+				if (this.snr != null)
+					lines.push('S/N score: ' + this.snr.toFixed(2) + ' dB');
 
 				return lines.join('\n');
 			},
