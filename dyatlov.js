@@ -23,6 +23,7 @@ Dyatlov.prototype = {
 			this.parsed = {
 				bandwidth: this.bandwidth(),
 				coords: this.coords(),
+				gps_fpm: this.parse_number(this.raw.fixes_min),
 				updated: this.parse_date(this.raw.updated),
 				users: {
 					current: this.parse_number(this.raw.users),
@@ -114,6 +115,10 @@ Dyatlov.prototype = {
 			wideband: function() {
 				return (this.parsed.bandwidth >= 5000000);
 			},
+			// Check if GPS clock is available
+			gps: function() {
+				return (this.parsed.gps_fpm > 0);
+			},
 			// Check if live recently and still relevant
 			// (less than 10 days of downtime)
 			recent: function() {
@@ -160,6 +165,10 @@ Dyatlov.prototype = {
 					// Rate custom setups by bandwidth
 					precedence += this.parsed.bandwidth / 1000000;
 
+				// GPS clock bonus
+				if (this.gps())
+					precedence += 2 + Math.min(this.parsed.gps_fpm, 30) / 15;
+
 				// Put offline receivers at the bottom
 				if (this.offline())
 					precedence /= 100;
@@ -203,6 +212,8 @@ Dyatlov.prototype = {
 					lines.push('Antenna: ' + this.raw.antenna);
 				if (this.snr != null)
 					lines.push('S/N score: ' + this.snr.toFixed(2) + ' dB');
+				if (this.gps())
+					lines.push('GPS clock available: ' + this.parsed.gps_fpm + ' fixes/min');
 
 				return lines.join('\n');
 			},
