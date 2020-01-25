@@ -1,5 +1,5 @@
 // Dyatlov map maker
-// Copyright 2018 Pierre Ynard
+// Copyright 2018, 2020 Pierre Ynard
 // Licensed under GPLv3+
 
 // Helper variable for inline class declaration
@@ -10,6 +10,7 @@ var C;
 var Dyatlov = function(element_id) {
 	this.map = this.create_map(element_id);
 	this.bubbles = [];
+	this.grid = {};
 	this.receivers().map(function(rx) {
 		return rx.attach(this);
 	}, this);
@@ -258,6 +259,14 @@ Dyatlov.prototype = {
 			},
 			// Attach receiver to map
 			attach: function(map_maker) {
+				var pos = this.marker.getPosition();
+				var coords = {
+					lat: pos.lat(),
+					lng: pos.lng(),
+				};
+				map_maker.distinct_marker(coords);
+				this.marker.setPosition(coords);
+
 				map_maker.bubbles.push(this.bubble);
 				var rx = this;
 				this.marker.addListener('click', function() {
@@ -268,6 +277,34 @@ Dyatlov.prototype = {
 			},
 		},
 	C),
+	// Shift coordinates to ensure marker is sufficiently distinct
+	// from others to be distinctly seen and used
+	distinct_marker: function(coords) {
+		var gran = 0.1; // Granularity, in degrees
+
+		for (var tries = 10; ; tries--) { // Give up eventually
+			// Enforce proper bounds: make sure it will work
+			// fine with both the grid and the marker API
+			if (coords.lat > 90)
+				coords.lat = 90;
+			else if (coords.lat < -90)
+				coords.lat = -90;
+			coords.lng = ((coords.lng + 540) % 360) - 180;
+
+			var key = Math.round(coords.lat / gran) + ','
+				+ Math.round(coords.lng / gran);
+			if ((! this.grid[key]) || tries <= 0) {
+				this.grid[key] = true;
+				break;
+			}
+
+			// Pick a random direction and move one grid cell
+			// length over
+			var theta = Math.random() * 2 * Math.PI;
+			coords.lat += gran * Math.sin(theta);
+			coords.lng += gran * Math.cos(theta);
+		}
+	},
 	// Merge and list valid receivers from available data sources
 	receivers: function() {
 		return [].concat(
