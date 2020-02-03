@@ -11,8 +11,8 @@ var Dyatlov = function(element_id) {
 	this.map = this.create_map(element_id);
 	this.bubbles = [];
 	this.grid = {};
-	this.receivers().map(function(rx) {
-		return rx.attach(this);
+	this.receivers().forEach(function(rx) {
+		rx.attach(this);
 	}, this);
 };
 
