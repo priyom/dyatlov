@@ -324,6 +324,7 @@ Dyatlov.prototype = {
 	create_map: function(element_id) {
 		var map = new google.maps.Map(document.getElementById(element_id), {
 			mapTypeId: 'hybrid',
+			scaleControl: true,
 		});
 		// Arbitrary area of interest, should suffice and work well
 		map.fitBounds({
