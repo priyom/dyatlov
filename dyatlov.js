@@ -305,6 +305,27 @@ Dyatlov.prototype = {
 				},
 			},
 		C),
+		// Built-in stub implementation, requiring no separate
+		// library or setup. This doesn't actually provide any map,
+		// but lists available receivers as a fallback.
+		Builtin: (
+			// Set up HTML to list receivers
+			C = function(element_id) {
+				this.ul = document.createElement('ul');
+				var el = document.getElementById(element_id);
+				el.innerHTML = '<p>Welcome to this wideband shortwave radio receiver map! If you are seeing this, the necessary map resources have not been fully set up by the administrator of this website, or your browser could not access them.</p><p>You can still browse below a list of receivers that would normally be displayed as markers on an interactive world map.</p>';
+				el.appendChild(this.ul);
+			},
+			C.prototype = {
+				// Add receiver to HTML list
+				add_marker: function(rx, coords) {
+					var li = document.createElement('li');
+					li.setAttribute('style', "list-style-image: url('" + rx.marker_icon() + "');");
+					li.innerHTML = rx.bubble_HTML();
+					this.ul.appendChild(li);
+				},
+			},
+		C),
 	},
 	// Shift coordinates to ensure marker is sufficiently distinct
 	// from others to be distinctly seen and used
