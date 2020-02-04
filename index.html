@@ -1,16 +1,21 @@
 <html>
 <head>
 <meta charset="UTF-8" />
+<title>Wideband shortwave radio receiver map</title>
 <script src="https://maps.googleapis.com/maps/api/js?key="></script>
 <script src="daynightoverlay.js"></script>
 <script src="moment.js"></script>
 <script src="static_rx.js"></script>
 <script src="kiwisdr_com.js"></script>
 <script src="dyatlov.js"></script>
-<title>Wideband shortwave radio receiver map</title>
+<script>
+// toolkit can be either 'GoogleMaps' or 'Builtin'
+// Leave unset for autodetection
+var toolkit;
+</script>
 </head>
 
-<body onload="new Dyatlov('map')">
+<body onload="new Dyatlov('map', toolkit)">
 <div id="map" style="height:100%"></div>
 <div style="position:absolute;bottom:0;background:rgba(255, 255, 255, 0.7);font-size:xx-small;font-family:sans-serif;">
 Rendered with <a href="https://github.com/priyom/dyatlov">dyatlov map maker</a>,

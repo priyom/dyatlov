@@ -5,10 +5,15 @@
 // Helper variable for inline class declaration
 var C;
 
-// Dyatlov map maker class: creates a world map
+// Dyatlov map maker class: creates a world map using the given toolkit
 // and lists receiver objects to place as markers on it
-var Dyatlov = function(element_id) {
-	var map_module = this.detect_toolkit();
+var Dyatlov = function(element_id, toolkit) {
+	var map_module;
+	if (toolkit)
+		map_module = this.maps[toolkit];
+	if (map_module == null)
+		map_module = this.detect_toolkit();
+
 	this.map = new map_module(element_id);
 	this.grid = {};
 	this.receivers().forEach(this.add_marker, this);
