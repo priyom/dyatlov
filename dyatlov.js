@@ -8,12 +8,9 @@ var C;
 // Dyatlov map maker class: creates a Google API map and lists receiver
 // objects to place them as markers on the map
 var Dyatlov = function(element_id) {
-	this.map = this.create_map(element_id);
-	this.bubbles = [];
+	this.map = new this.maps.GoogleMaps(element_id);
 	this.grid = {};
-	this.receivers().forEach(function(rx) {
-		rx.attach(this);
-	}, this);
+	this.receivers().forEach(this.add_marker, this);
 };
 
 Dyatlov.prototype = {
@@ -23,7 +20,6 @@ Dyatlov.prototype = {
 			this.raw = data;
 			this.parsed = {
 				bandwidth: this.bandwidth(),
-				coords: this.coords(),
 				gps_fpm: this.parse_number(this.raw.fixes_min),
 				updated: this.parse_date(this.raw.updated),
 				users: {
@@ -39,8 +35,6 @@ Dyatlov.prototype = {
 				return {};
 
 			this.title = this.marker_title();
-			this.marker = this.create_marker();
-			this.bubble = this.create_bubble();
 		},
 		C.prototype = {
 			xml_escape: function(text) {
@@ -240,43 +234,78 @@ Dyatlov.prototype = {
 			bubble_HTML: function() {
 				return '<a href="' + this.xml_escape(this.raw.url) + '" style="color:teal;font-weight:bold;text-decoration:none" title="' + this.xml_escape(this.title) + '">' + this.xml_escape(this.raw.name) + '</a>';
 			},
-			// Create a Google API marker object for this receiver
-			create_marker: function() {
-				return new google.maps.Marker({
-					title: this.title, // XML-encoded by Marker code
-					position: new google.maps.LatLng(this.parsed.coords),
-					zIndex: google.maps.Marker.MAX_ZINDEX +
-					        Math.round(65536 * this.precedence()),
-					icon: this.marker_icon(),
-				});
-			},
-			// Create a Google API info bubble object for the
-			// marker of this receiver
-			create_bubble: function() {
-				return new google.maps.InfoWindow({
-					content: this.bubble_HTML(),
-				});
-			},
-			// Attach receiver to map
-			attach: function(map_maker) {
-				var pos = this.marker.getPosition();
-				var coords = {
-					lat: pos.lat(),
-					lng: pos.lng(),
-				};
-				map_maker.distinct_marker(coords);
-				this.marker.setPosition(coords);
-
-				map_maker.bubbles.push(this.bubble);
-				var rx = this;
-				this.marker.addListener('click', function() {
-					map_maker.clear_bubbles();
-					rx.bubble.open(map_maker.map, rx.marker);
-				});
-				this.marker.setMap(map_maker.map);
-			},
 		},
 	C),
+	// Modular classes implementing a map component interface through
+	// alternative supported map library APIs. Implementations should
+	// provide an add_marker() interface to place receivers on the map.
+	maps: {
+		// Google Maps API - documented at
+		// https://developers.google.com/maps/documentation/javascript/tutorial
+		GoogleMaps: (
+			// Create and set up Google API map object
+			C = function(element_id) {
+				this.map = new google.maps.Map(document.getElementById(element_id), {
+					mapTypeId: 'hybrid',
+					scaleControl: true,
+				});
+				// Arbitrary area of interest,
+				// should suffice and work well
+				this.map.fitBounds({
+					north: 70,
+					south: -60,
+					west: -180,
+					east: 180,
+				});
+
+				// Overlay day/night separation on the map,
+				// if an implementation was loaded.
+				// DayNightOverlay API implementation available
+				// at https://github.com/marmat/google-maps-api-addons
+				if (typeof DayNightOverlay == 'function') {
+					new DayNightOverlay({
+						map: this.map,
+					});
+				}
+				// nite API implementation available at
+				// https://github.com/rossengeorgiev/nite-overlay
+				else if (typeof nite == 'object' && nite &&
+				         typeof nite.init == 'function') {
+					nite.init(this.map);
+				}
+
+				this.bubbles = [];
+			},
+			C.prototype = {
+				// Add receiver as marker onto map
+				add_marker: function(rx, coords) {
+
+					var marker = new google.maps.Marker({
+						title: rx.title, // XML-encoded by Marker code
+						position: new google.maps.LatLng(coords),
+						zIndex: google.maps.Marker.MAX_ZINDEX +
+						        Math.round(65536 * rx.precedence()),
+						icon: rx.marker_icon(),
+					});
+
+					var bubble = new google.maps.InfoWindow({
+						content: rx.bubble_HTML(),
+					});
+					this.bubbles.push(bubble);
+
+					var t = this; // For closure below
+					marker.addListener('click', function() {
+						t.bubbles.forEach(function(bub) {
+							bub.close();
+						});
+						bubble.open(t.map, marker);
+					});
+
+					marker.setMap(this.map);
+				},
+			},
+		C),
+	},
 	// Shift coordinates to ensure marker is sufficiently distinct
 	// from others to be distinctly seen and used
 	distinct_marker: function(coords) {
@@ -317,46 +346,14 @@ Dyatlov.prototype = {
 			// If this receiver data is rejected, an empty object
 			// is returned instead, so filter these afterwards
 		}, this).filter(function(rx) {
-			return (rx.attach != null);
+			return (rx.bubble_HTML != null);
 		});
 	},
-	// Create and set up the Google API map object
-	create_map: function(element_id) {
-		var map = new google.maps.Map(document.getElementById(element_id), {
-			mapTypeId: 'hybrid',
-			scaleControl: true,
-		});
-		// Arbitrary area of interest, should suffice and work well
-		map.fitBounds({
-			north: 70,
-			south: -60,
-			west: -180,
-			east: 180,
-		});
-
-		// Overlay day/night separation on the map, if an
-		// implementation was loaded.
-		// DayNightOverlay API implementation available at
-		// https://github.com/marmat/google-maps-api-addons
-		if (typeof DayNightOverlay == "function") {
-			new DayNightOverlay({
-				map: map,
-			});
-		}
-		// nite API implementation available at
-		// https://github.com/rossengeorgiev/nite-overlay
-		else if (typeof nite == "object" && nite &&
-		         typeof nite.init == "function") {
-			nite.init(map);
-		}
-
-		return map;
-	},
-	// Clear all info bubbles of all markers
-	clear_bubbles: function() {
-		this.bubbles.forEach(function(bubble) {
-			bubble.close();
-		});
+	// Add receiver as marker onto map
+	add_marker: function(rx) {
+		var coords = rx.coords();
+		this.distinct_marker(coords);
+		this.map.add_marker(rx, coords);
 	},
 };
 
