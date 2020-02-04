@@ -5,10 +5,11 @@
 // Helper variable for inline class declaration
 var C;
 
-// Dyatlov map maker class: creates a Google API map and lists receiver
-// objects to place them as markers on the map
+// Dyatlov map maker class: creates a world map
+// and lists receiver objects to place as markers on it
 var Dyatlov = function(element_id) {
-	this.map = new this.maps.GoogleMaps(element_id);
+	var map_module = this.detect_toolkit();
+	this.map = new map_module(element_id);
 	this.grid = {};
 	this.receivers().forEach(this.add_marker, this);
 };
@@ -326,6 +327,16 @@ Dyatlov.prototype = {
 				},
 			},
 		C),
+	},
+	// Select map service implementation based on which toolkit API
+	// is loaded and available
+	detect_toolkit: function(element_id) {
+		if (typeof google == 'object' && google &&
+		    typeof google.maps == 'object' && google.maps &&
+		    typeof google.maps.Map == 'function') {
+			return this.maps.GoogleMaps;
+		} else
+			return this.maps.Builtin;
 	},
 	// Shift coordinates to ensure marker is sufficiently distinct
 	// from others to be distinctly seen and used
