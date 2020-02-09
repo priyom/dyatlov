@@ -2,12 +2,80 @@
 <head>
 <meta charset="UTF-8" />
 <title>Wideband shortwave radio receiver map</title>
+<!--
+Web page for dyatlov map maker
+Copyright 2020 Pierre Ynard
+Licensed under GPLv3+
+
+Edit this file and follow the instructions below to install and set up
+your dyatlov map instance.
+-->
+
+<!-- 1. Map toolkit
+Choose and set up one of the map toolkits below. For now, only the
+Google Maps API is available.
+-->
+
+<!--
+Google Maps API: fill in the API key.
+-->
 <script src="https://maps.googleapis.com/maps/api/js?key="></script>
+
+<!-- 2. Optional add-ons
+For a fully featured map, you can set up each of the optional add-ons
+below.
+-->
+
+<!--
+Day/night overlay library. Supported implementations:
+https://github.com/marmat/google-maps-api-addons (with Google Maps)
+https://github.com/rossengeorgiev/nite-overlay (with Google Maps)
+Optional. Pick one implementation compatible with your map API above,
+and install a local copy or point to remote hosting of it, or comment
+out if unused.
+-->
 <script src="daynightoverlay.js"></script>
+
+<!--
+Time manipulation library. Supported implementations:
+https://momentjs.com/
+Optional. Install local copy, point to remote hosting or comment out.
+-->
 <script src="moment.js"></script>
+
+<!-- 3. Dyatlov map maker resources
+The resources below, along with this web page, are part of
+or generated with the dyatlov map maker, available at:
+https://github.com/priyom/dyatlov
+Install local copies or point to remote hosting. Data sources are all
+recommended, but comment out any unused one.
+-->
+
+<!--
+Static receiver data. You need this data source to feature on your map
+select receivers such as the UTwente WebSDR.
+-->
 <script src="static_rx.js"></script>
+
+<!--
+Dynamically generated KiwiSDR.com receiver data. You need this data
+source to feature the KiwiSDR network on your map. Generate and keep
+this file up to date by running the `kiwisdr_com-update` script
+regularly. Caution: running this script as an automated task may open
+attack vectors onto your system, so be sure to use appropriate system
+administration precautions.
+-->
 <script src="kiwisdr_com.js"></script>
+
+<!--
+Dyatlov map maker API. Required.
+-->
 <script src="dyatlov.js"></script>
+
+<!-- 4. Local configuration
+You can optionally edit the local configuration below to further suit
+your needs.
+-->
 <script>
 // toolkit can be either 'GoogleMaps' or 'Builtin'
 // Leave unset for autodetection
