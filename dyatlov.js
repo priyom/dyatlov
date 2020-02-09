@@ -1,5 +1,5 @@
 // Dyatlov map maker
-// Copyright 2018, 2020 Pierre Ynard
+// Copyright 2017, 2018, 2020 Pierre Ynard
 // Licensed under GPLv3+
 
 // Helper variable for inline class declaration
