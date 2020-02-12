@@ -7,14 +7,14 @@ var C;
 
 // Dyatlov map maker class: creates a world map using the given toolkit
 // and lists receiver objects to place as markers on it
-var Dyatlov = function(element_id, toolkit) {
+var Dyatlov = function(element_id, toolkit, config) {
 	var map_module;
 	if (toolkit)
 		map_module = this.maps[toolkit];
 	if (map_module == null)
 		map_module = this.detect_toolkit();
 
-	this.map = new map_module(element_id);
+	this.map = new map_module(element_id, config);
 	this.grid = {};
 	this.receivers().forEach(this.add_marker, this);
 };
@@ -250,14 +250,16 @@ Dyatlov.prototype = {
 		},
 	C),
 	// Modular classes implementing a map component interface through
-	// alternative supported map library APIs. Implementations should
-	// provide an add_marker() interface to place receivers on the map.
+	// alternative supported map library APIs. Implementations can
+	// make optional use of a specific configuration argument, and
+	// should provide an add_marker() interface to place receivers
+	// on the map.
 	maps: {
 		// Google Maps API - documented at
 		// https://developers.google.com/maps/documentation/javascript/tutorial
 		GoogleMaps: (
 			// Create and set up Google API map object
-			C = function(element_id) {
+			C = function(element_id, config) {
 				this.map = new google.maps.Map(document.getElementById(element_id), {
 					mapTypeId: 'hybrid',
 					scaleControl: true,
@@ -322,7 +324,7 @@ Dyatlov.prototype = {
 		// Implementation available at https://leafletjs.com/
 		Leaflet: (
 			// Create and set up Leaflet map object
-			C = function(element_id) {
+			C = function(element_id, config) {
 				this.map = L.map(element_id);
 				// Arbitrary area of interest,
 				// should suffice and work well
@@ -397,7 +399,7 @@ Dyatlov.prototype = {
 		// but lists available receivers as a fallback.
 		Builtin: (
 			// Set up HTML to list receivers
-			C = function(element_id) {
+			C = function(element_id, config) {
 				this.ul = document.createElement('ul');
 				var el = document.getElementById(element_id);
 				el.innerHTML = '<p>Welcome to this wideband shortwave radio receiver map! If you are seeing this, the necessary map resources have not been fully set up by the administrator of this website, or your browser could not access them.</p><p>You can still browse below a list of receivers that would normally be displayed as markers on an interactive world map.</p>';
