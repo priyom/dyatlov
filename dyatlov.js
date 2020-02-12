@@ -236,6 +236,13 @@ Dyatlov.prototype = {
 			marker_icon: function() {
 				return 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2%7C' + this.marker_color();
 			},
+			// Size of marker icon, for positioning purposes
+			marker_icon_size: function() {
+				return {
+					width: 21,
+					height: 34,
+				};
+			},
 			// HTML content of marker info bubble
 			bubble_HTML: function() {
 				return '<a href="' + this.xml_escape(this.raw.url) + '" style="color:teal;font-weight:bold;text-decoration:none" title="' + this.xml_escape(this.title) + '">' + this.xml_escape(this.raw.name) + '</a>';
