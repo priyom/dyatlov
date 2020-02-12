@@ -26,7 +26,8 @@ instead.
 Leaflet map API. Implementation available at:
 https://leafletjs.com/
 Install local copy, point to remote hosting or comment out if using
-Google Maps instead.
+Google Maps instead. You will optionally need to provide the
+images/layers.png file as well.
 -->
 <link rel="stylesheet" href="leaflet.css" />
 <script src="leaflet.js"></script>
@@ -92,6 +93,27 @@ your needs.
 // Leave unset for autodetection
 var toolkit;
 var config;
+
+// Tile hosting provider configuration for Leaflet toolkit
+//
+// Uncomment and edit to replace the default OpenStreetMap map tiles
+// by your assortment of different selectable tilesets and providers.
+// You will need to provide the images/layers.png icon as well. The
+// first tileset listed will be used as default when loading the map.
+//
+// Don't consider this configuration as a stable API: just follow and
+// adapt the examples provided.
+/*
+var leaflet_config = [
+	{ // OpenStreetMap: free and ready to use
+		label: 'Map',
+		url:'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	},
+];
+toolkit = 'Leaflet', config = leaflet_config;
+*/
+
 </script>
 </head>
 

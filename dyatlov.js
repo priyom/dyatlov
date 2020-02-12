@@ -322,6 +322,8 @@ Dyatlov.prototype = {
 		C),
 		// Leaflet interactive map library API
 		// Implementation available at https://leafletjs.com/
+		// An optional list of tilesets with hosting provider
+		// configuration is accepted
 		Leaflet: (
 			// Create and set up Leaflet map object
 			C = function(element_id, config) {
@@ -358,9 +360,41 @@ Dyatlov.prototype = {
 					terminator.addTo(this.map);
 				}
 
-				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-				}).addTo(this.map);
+				var tilesets = config;
+				if (tilesets == null) {
+					// Default tile provider is
+					// OpenStreetMap
+					tilesets = [
+						{
+							label: 'Map',
+							url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+							attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+						},
+					];
+				}
+
+				var tslayers = tilesets.map(function(tileset) {
+					return {
+						label: tileset.label,
+						layer: L.tileLayer(tileset.url, {
+							attribution: tileset.attribution,
+						}),
+					};
+				});
+				if (tslayers.length > 0)
+					tslayers[0].layer.addTo(this.map);
+
+				// If several tilesets are configured,
+				// add a control switch onto the map to
+				// toggle between them; Leaflet's switch
+				// will require the images/layers.png icon.
+				if (tslayers.length > 1) {
+					var control = L.control.layers({}, {});
+					tslayers.forEach(function(tileset) {
+						this.addBaseLayer(tileset.layer, tileset.label);
+					}, control);
+					control.addTo(this.map);
+				}
 			},
 			C.prototype = {
 				// Add receiver as marker onto map
