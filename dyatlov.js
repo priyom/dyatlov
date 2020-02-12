@@ -332,6 +332,30 @@ Dyatlov.prototype = {
 				]);
 				L.control.scale().addTo(this.map);
 
+				// Overlay day/night separation on the map,
+				// if an implementation was loaded.
+				// L.terminator API implementation available at
+				// https://github.com/joergdietrich/Leaflet.Terminator
+				if (typeof L.terminator == 'function') {
+					var terminator = L.terminator({
+						// Disable "clickable" pointer
+						// mouse cursor over overlay
+						interactive: false,
+					});
+					var interactions = [
+						'viewreset',
+						'zoomstart',
+						'movestart',
+						'popupopen',
+						'popupclose',
+						'baselayerchange',
+					];
+					this.map.addEventListener(interactions.join(' '), function(e) {
+						terminator.setTime();
+					});
+					terminator.addTo(this.map);
+				}
+
 				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 				}).addTo(this.map);

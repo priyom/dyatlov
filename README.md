@@ -41,6 +41,7 @@ There are several other optional libraries that you can use as add-ons. Dyatlov 
 
 * [marmat](https://github.com/marmat)'s [day/night overlay](https://github.com/marmat/google-maps-api-addons)
 * [rossengeorgiev](https://github.com/rossengeorgiev)'s [nite overlay](https://github.com/rossengeorgiev/nite-overlay)
+* [joergdietrich](https://github.com/joergdietrich)'s [terminator](https://github.com/joergdietrich/Leaflet.Terminator)
 * [Moment.js](https://momentjs.com/)
 
 One more thing you will need to set up is automatic generation of the [KiwiSDR.com](http://kiwisdr.com/public/) receiver data file, created and updated by running the `kiwisdr_com-update` script. Be careful if setting this up as an automated task: like with all scripts fetching external data, this can potentially open attack vectors onto your system; so make sure you know what you are doing and follow good security and system administration practices.
