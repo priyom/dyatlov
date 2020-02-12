@@ -84,8 +84,8 @@ var toolkit;
 </head>
 
 <body onload="new Dyatlov('map', toolkit)">
-<div id="map" style="height: 100%;"></div>
-<div style="position: absolute; bottom: 0; background: rgba(255, 255, 255, 0.7); font-size: xx-small; font-family: sans-serif;">
+<div id="map" style="height: 100%; z-index: 1;"></div>
+<div style="position: absolute; bottom: 0; z-index: 2; background: rgba(255, 255, 255, 0.7); font-size: xx-small; font-family: sans-serif;">
 Rendered with <a href="https://github.com/priyom/dyatlov">dyatlov map maker</a>,
 dynamic receiver data from <a href="http://kiwisdr.com/public/">KiwiSDR.com</a>
 | <a href="https://github.com/priyom/dyatlov#legend">Legend</a>
