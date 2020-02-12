@@ -318,6 +318,56 @@ Dyatlov.prototype = {
 				},
 			},
 		C),
+		// Leaflet interactive map library API
+		// Implementation available at https://leafletjs.com/
+		Leaflet: (
+			// Create and set up Leaflet map object
+			C = function(element_id) {
+				this.map = L.map(element_id);
+				// Arbitrary area of interest,
+				// should suffice and work well
+				this.map.fitBounds([
+					[ 70, -180 ],
+					[ -60, 180 ],
+				]);
+				L.control.scale().addTo(this.map);
+
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+				}).addTo(this.map);
+			},
+			C.prototype = {
+				// Add receiver as marker onto map
+				add_marker: function(rx, coords) {
+					var size = rx.marker_icon_size();
+					var icon = L.icon({
+						iconUrl: rx.marker_icon(),
+						iconSize: [
+							size.width,
+							size.height,
+						],
+						iconAnchor: [ // Center bottom
+							Math.round(size.width / 2) - 1,
+							size.height - 1,
+						],
+						popupAnchor: [ // Center top
+							0,
+							- size.height,
+						],
+					});
+
+					var marker = L.marker(coords, {
+						title: rx.title, // XML-encoded by marker code
+						zIndexOffset: Math.round(65536 * rx.precedence()),
+						icon: icon,
+					});
+
+					marker.bindPopup(rx.bubble_HTML());
+
+					marker.addTo(this.map);
+				},
+			},
+		C),
 		// Built-in stub implementation, requiring no separate
 		// library or setup. This doesn't actually provide any map,
 		// but lists available receivers as a fallback.
@@ -343,9 +393,14 @@ Dyatlov.prototype = {
 	// Select map service implementation based on which toolkit API
 	// is loaded and available
 	detect_toolkit: function(element_id) {
-		if (typeof google == 'object' && google &&
-		    typeof google.maps == 'object' && google.maps &&
-		    typeof google.maps.Map == 'function') {
+		// Give precedence to Leaflet because, coupled with
+		// OpenStreetMap, it is free and registration-free
+		if (typeof L == 'object' && L &&
+		    typeof L.map == 'function') {
+			return this.maps.Leaflet;
+		} else if (typeof google == 'object' && google &&
+		           typeof google.maps == 'object' && google.maps &&
+		           typeof google.maps.Map == 'function') {
 			return this.maps.GoogleMaps;
 		} else
 			return this.maps.Builtin;

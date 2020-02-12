@@ -1,7 +1,7 @@
 Dyatlov map maker
 =================
 
-The dyatlov map maker is aimed at displaying a map representation of various wideband shortwave radio receivers available around the world. It is built on top of the Google Maps API.
+The dyatlov map maker is aimed at displaying a map representation of various wideband shortwave radio receivers available around the world. With a modular architecture, it can rely on several interactive map toolkits: for now, only the [Google Maps](https://developers.google.com/maps/documentation/javascript/tutorial) and [Leaflet](https://leafletjs.com/) APIs are supported, but more could be easily added.
 
 A fully set-up receiver map instance is hosted at [rx.linkfanel.net](http://rx.linkfanel.net/).
 
@@ -32,9 +32,12 @@ We will study and work to include more receiver networks in the future.
 Hosting
 =======
 
-You can install, host and run your own dyatlov map instance: just clone the repository or otherwise download the [index.html](index.html) file, and edit and follow the instructions inside it. You will need to fill in a valid API key for Google Maps.
+You can install, host and run your own dyatlov map instance: just clone the repository or otherwise download the [index.html](index.html) file, and edit and follow the instructions inside it. You will need to choose one of two map toolkits:
 
-There are several optional libraries that you can use as add-ons. Dyatlov can take advantage of the following libraries for full functionality:
+* the [Google Maps](https://developers.google.com/maps/documentation/javascript/tutorial) API is a classic, but you will need a valid API key registered with a proper billing account;
+* the [Leaflet](https://leafletjs.com/) library, using [OpenStreetMap](https://www.openstreetmap.org/), is a free alternative; however these maps don't offer satellite pictures.
+
+There are several other optional libraries that you can use as add-ons. Dyatlov can take advantage of the following libraries for full functionality:
 
 * [marmat](https://github.com/marmat)'s [day/night overlay](https://github.com/marmat/google-maps-api-addons)
 * [rossengeorgiev](https://github.com/rossengeorgiev)'s [nite overlay](https://github.com/rossengeorgiev/nite-overlay)

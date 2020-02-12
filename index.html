@@ -12,14 +12,24 @@ your dyatlov map instance.
 -->
 
 <!-- 1. Map toolkit
-Choose and set up one of the map toolkits below. For now, only the
-Google Maps API is available.
+Choose and set up one of the map toolkits below. You need only one of
+them; comment out the others.
 -->
 
 <!--
-Google Maps API: fill in the API key.
+Google Maps API: fill in the API key, or comment out if using Leaflet
+instead.
 -->
 <script src="https://maps.googleapis.com/maps/api/js?key="></script>
+
+<!--
+Leaflet map API. Implementation available at:
+https://leafletjs.com/
+Install local copy, point to remote hosting or comment out if using
+Google Maps instead.
+-->
+<link rel="stylesheet" href="leaflet.css" />
+<script src="leaflet.js"></script>
 
 <!-- 2. Optional add-ons
 For a fully featured map, you can set up each of the optional add-ons
@@ -77,7 +87,7 @@ You can optionally edit the local configuration below to further suit
 your needs.
 -->
 <script>
-// toolkit can be either 'GoogleMaps' or 'Builtin'
+// toolkit can be one of 'GoogleMaps', 'Leaflet' or 'Builtin'
 // Leave unset for autodetection
 var toolkit;
 </script>
