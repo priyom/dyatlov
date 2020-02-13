@@ -384,10 +384,10 @@ Dyatlov.prototype = {
 				if (tslayers.length > 0)
 					tslayers[0].layer.addTo(this.map);
 
-				// If several tilesets are configured,
-				// add a control switch onto the map to
-				// toggle between them; Leaflet's switch
-				// will require the images/layers.png icon.
+				// If several tilesets are configured, add
+				// a control switch onto the map to toggle
+				// between them; Leaflet's switch will
+				// require the images/layers[-2x].png icons.
 				if (tslayers.length > 1) {
 					var control = L.control.layers({}, {});
 					tslayers.forEach(function(tileset) {
