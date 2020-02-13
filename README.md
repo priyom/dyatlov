@@ -35,7 +35,7 @@ Hosting
 You can install, host and run your own dyatlov map instance: just clone the repository or otherwise download the [index.html](index.html) file, and edit and follow the instructions inside it. You will need to choose one of two map toolkits:
 
 * the [Google Maps](https://developers.google.com/maps/documentation/javascript/tutorial) API is a classic, but you will need a valid API key registered with a proper billing account;
-* the [Leaflet](https://leafletjs.com/) library, using [OpenStreetMap](https://www.openstreetmap.org/), is a free alternative; however these maps don't offer satellite pictures.
+* the [Leaflet](https://leafletjs.com/) library, using [OpenStreetMap](https://www.openstreetmap.org/), is a free alternative; however these maps don't offer satellite pictures - for those you will need extra setup and registration with additional map providers.
 
 There are several other optional libraries that you can use as add-ons. Dyatlov can take advantage of the following libraries for full functionality:
 
