@@ -111,7 +111,7 @@ var config;
 var leaflet_config = [
 	{ // MapTiler: fill in API key
 		label: 'Satellite',
-		url: 'https://api.maptiler.com/maps/hybrid/256/{z}/{x}/{y}.jpg?key=',
+		url: 'https://api.maptiler.com/maps/hybrid/256/{z}/{x}/{y}{r}.jpg?key=',
 		attribution: '&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 	},
 	{ // HERE (formerly Nokia Maps): fill in API key
@@ -131,7 +131,7 @@ var leaflet_config = [
 	},
 	{ // Mapbox: fill in access token and install images/mapbox-wordmark.svg
 		label: 'Satellite',
-		url: 'https://{s}.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}.jpg90?access_token=',
+		url: 'https://{s}.tiles.mapbox.com/v4/mapbox.satellite/{z}/{x}/{y}{r}.jpg90?access_token=',
 		attribution: '&copy; <a href="https://www.mapbox.com/about/maps/">Mapbox</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://www.maxar.com/">Maxar</a> <strong><a href="https://www.mapbox.com/map-feedback/">Improve this map</a></strong> <img src="images/mapbox-wordmark.svg" width="65" height="20" />',
 	},
 ];
