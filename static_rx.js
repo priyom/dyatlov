@@ -19,12 +19,4 @@ var static_rx = [
 		users_max: '20',
 		antenna: '30m random wire',
 	},
-	{
-		name: '0-7.6 MHz OpenWebRX SDR, OH2EAT, Finland (with 4-minute history buffer)',
-		url: 'http://sdr.dy.fi/',
-		gps: '(60.940055, 25.990486)',
-		bands: '0-7600000',
-		users_max: '20',
-		antenna: 'Inverted L',
-	},
 ];
