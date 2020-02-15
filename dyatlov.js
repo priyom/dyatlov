@@ -55,6 +55,10 @@ Dyatlov.prototype = {
 					return xml_entities[c];
 				});
 			},
+			printf_02X: function(n) {
+				var x = Number(n).toString(16).toUpperCase();
+				return x.length < 2 ? '0' + x : x;
+			},
 			parse_number: function(val) {
 				if (val == null || val == '')
 					return null;
