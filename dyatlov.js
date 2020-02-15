@@ -233,8 +233,16 @@ Dyatlov.prototype = {
 				if (! avail)
 					return 'FFFF6E'; // Yellow
 
-				// TODO: color scale based on reception quality
-				return 'FD7567';
+				var q = this.quality();
+				if (q == null)
+					return '807567'; // Gray
+
+				// Shades of red - brightness and
+				// vividness scale with quality
+				var r = this.printf_02X(Math.round(255 * q) + 0);
+				var g = this.printf_02X(Math.round(64 * q) + 53);
+				var b = this.printf_02X(Math.round(48 * q) + 55);
+				return (r + g + b);
 			},
 			// Color-coded icon URL to use as marker on the map
 			marker_icon: function() {
