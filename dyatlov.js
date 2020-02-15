@@ -408,11 +408,11 @@ Dyatlov.prototype = {
 						],
 						iconAnchor: [ // Center bottom
 							Math.round(size.width / 2) - 1,
-							size.height - 1,
+							size.height,
 						],
 						popupAnchor: [ // Center top
 							0,
-							- size.height,
+							- (size.height + 1),
 						],
 					});
 
