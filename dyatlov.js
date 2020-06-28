@@ -339,7 +339,9 @@ Dyatlov.prototype = {
 		Leaflet: (
 			// Create and set up Leaflet map object
 			C = function(element_id, config) {
-				this.map = L.map(element_id);
+				this.map = L.map(element_id, {
+					worldCopyJump: true,
+				});
 				// Arbitrary area of interest,
 				// should suffice and work well
 				this.map.fitBounds([
