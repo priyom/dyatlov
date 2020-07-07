@@ -1,6 +1,14 @@
 // Dyatlov map maker
 // Copyright 2017, 2018, 2020 Pierre Ynard
 // Licensed under GPLv3+
+//
+// As a special exception to the GPL, you may convey this software
+// or a work based on it, combined with data collections used as
+// input for it, or combined with the publicly available reference
+// implementation of the Google Maps API, without licensing under
+// the GPL the parts of the whole work corresponding to said data
+// collections or implementation. You must still license under the GPL
+// the remainder of the whole work and all its other parts.
 
 // Helper variable for inline class declaration
 var C;
