@@ -254,8 +254,7 @@ Dyatlov.prototype = {
 			},
 			// Color-coded icon URL to use as marker on the map
 			marker_icon: function() {
-				//'<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" width="21" height="34"><path d="M 19.5,9.5469494 C 19.5,12.03223 18.097139,13.965539 16.863961,15.91091 8.422781,29.22709 12.109244,35.147897 10.6875,33.109449 10.077219,32.234449 12.639719,27.66459 4.136039,15.91091 2.785922,14.044796 1.5,12.03223 1.5,9.5469494 c 0,-4.9705629 4.029437,-9.00000031 9,-9.00000031 4.970563,-1e-7 9,4.02943731 9,9.00000031 z" style="fill:#' + this.marker_color() + ';stroke:#000000;stroke-width:1.3;" /><circle r="1.5" cy="10" cx="10.5" style="fill:#000000;" /></svg>';
-				return 'https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=%E2%80%A2%7C' + this.marker_color();
+				return 'data:image/svg+xml,' + encodeURIComponent('<?xml version="1.0" encoding="UTF-8" standalone="no"?><svg xmlns="http://www.w3.org/2000/svg" width="21" height="34"><path d="M 19.5,9.5469494 C 19.5,12.03223 18.097139,13.965539 16.863961,15.91091 8.422781,29.22709 12.109244,35.147897 10.6875,33.109449 10.077219,32.234449 12.639719,27.66459 4.136039,15.91091 2.785922,14.044796 1.5,12.03223 1.5,9.5469494 c 0,-4.9705629 4.029437,-9.00000031 9,-9.00000031 4.970563,-1e-7 9,4.02943731 9,9.00000031 z" style="fill:#' + this.marker_color() + ';stroke:#000000;stroke-width:1.3;" /><circle r="1.5" cy="10" cx="10.5" style="fill:#000000;" /></svg>');
 			},
 			// Size of marker icon, for positioning purposes
 			marker_icon_size: function() {
