@@ -9,6 +9,7 @@ var static_rx = [
 		gps: '(52.2381,6.8577)',
 		bands: '0-29160000',
 		users_max: '800',
+		sdr_hw: 'WebSDR / custom, high-performance GPU-based setup',
 		antenna: 'Mini-Whip',
 	},
 	{
@@ -17,6 +18,7 @@ var static_rx = [
 		gps: '(54.1605231, 21.5543704)',
 		bands: '2000000-16000000',
 		users_max: '20',
+		sdr_hw: 'WebSDR / multiple RTL-SDR dongles with converter',
 		antenna: '30m random wire',
 	},
 ];
