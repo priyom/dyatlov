@@ -204,6 +204,10 @@ Dyatlov.prototype = {
 			marker_title: function() {
 				var lines = [];
 				lines.push(this.raw.name);
+				if (this.raw.sdr_hw)
+					lines.push('Setup: ' + this.raw.sdr_hw);
+				if (this.raw.antenna)
+					lines.push('Antenna: ' + this.raw.antenna);
 
 				if (! this.offline()) {
 					var users = this.parsed.users;
@@ -221,8 +225,6 @@ Dyatlov.prototype = {
 				} else
 					lines.push('Currently offline (check receiver for details)');
 
-				if (this.raw.antenna)
-					lines.push('Antenna: ' + this.raw.antenna);
 				if (this.snr != null)
 					lines.push('S/N score: ' + this.snr.toFixed(2) + ' dB');
 				if (this.gps())
