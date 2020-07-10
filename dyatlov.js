@@ -41,8 +41,11 @@ Dyatlov.prototype = {
 					max: this.parse_number(this.raw.users_max),
 				},
 			};
-			// TODO: recover SNR from definitive data source
+
+			// TODO: recover metrics from definitive data source
 			this.snr = null;
+			this.blocked = null;
+
 			this.age = this.liveness_age();
 
 			if (! this.validate())
@@ -124,9 +127,11 @@ Dyatlov.prototype = {
 
 				return Date.now() - this.parsed.updated;
 			},
-			// Check that receiver is wideband (more than 5 MHz)
+			// Check that receiver is wideband (more than 5 MHz).
+			// More than 50% of blocked spectrum is considered
+			// as not wideband continuous spectrum anymore.
 			wideband: function() {
-				return (this.parsed.bandwidth >= 5000000);
+				return (this.parsed.bandwidth >= 5000000 && !(this.blocked && this.blocked > 0.5));
 			},
 			// Check if GPS clock is available
 			gps: function() {
@@ -177,6 +182,11 @@ Dyatlov.prototype = {
 				else if (this.availability() == null)
 					// Rate custom setups by bandwidth
 					precedence += this.parsed.bandwidth / 1000000;
+
+				// Penalty equal to the fraction of
+				// blocked spectrum
+				if (this.blocked)
+					precedence *= 1 - this.blocked;
 
 				// GPS clock bonus
 				if (this.gps())
@@ -229,6 +239,8 @@ Dyatlov.prototype = {
 					lines.push('S/N score: ' + this.snr.toFixed(2) + ' dB');
 				if (this.gps())
 					lines.push('GPS clock available: ' + this.parsed.gps_fpm + ' fixes/min');
+				if (this.blocked)
+					lines.push('Blocked spectrum: ' + Number(this.blocked * 100).toFixed(1) + '%');
 
 				return lines.join('\n');
 			},
