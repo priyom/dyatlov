@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 # KiwiSDR.com receiver list parser for dyatlov map maker
-# Copyright 2017 Pierre Ynard
+# Copyright 2017, 2020 Pierre Ynard
 # Licensed under GPLv3+
 #
 # This script reads the http://kiwisdr.com/public/ listing HTML from the
@@ -23,16 +23,30 @@ sub json_escape {
 print "// KiwiSDR.com receiver list for dyatlov map maker\n// Automatically generated from http://kiwisdr.com/public/\n";
 
 # Extract source data timestamp
+my $limit = -1;
 while (<STDIN>) {
-	if (/<body[ >]/) {
-		<STDIN>;
-		<STDIN>;
-		if (defined($_ = <STDIN>) && /^([^<\r]+)<br>/) {
+	# This is where the timestamp is currently found
+	if (/<div class='id-text-container'>/) {
+		if (defined($_ = <STDIN>) && /(.*)/) {
 			print "// KiwiSDR.com data timestamp: $1\n";
 		} else {
 			print STDERR "Data timestamp extraction failed.\n";
 		}
 		last;
+	}
+	# Safety nets: abort if going too far without finding the timestamp.
+	# This tag means that the receiver listing has already been reached.
+	elsif (/<div class='cl-entry'>/ || $limit == 0) {
+		print STDERR "Data timestamp extraction failed.\n";
+		last;
+	}
+
+	# Safety nets: abort if the timestamp can't be found within
+	# so many lines into <body>
+	if ($limit < 0 && /<body[ >]/) {
+		$limit = 20;
+	} elsif ($limit > 0) {
+		$limit--;
 	}
 }
 
